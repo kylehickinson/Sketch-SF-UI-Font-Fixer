@@ -1,0 +1,23 @@
+{
+  "author" : "Kyle Hickinson",
+  "commands" : [
+    {
+      "script" : "script.cocoascript",
+      "handler" : "onRun",
+      "shortcut" : "cmd ctrl t",
+      "name" : "Fix San Francisco Character Spacing",
+      "identifier" : "fixSelectedLayers",
+    },
+  ],
+  "menu": {
+    "isRoot": true,
+    "items": [
+      "fixSelectedLayers",
+    ]
+  },
+  "identifier" : "com.kylehickinson.sf-fix-fonts",
+  "version" : "0.1",
+  "description" : "A plugin which adjusts character spacing of SF UI Text/Display text layers based on its font size",
+  "authorEmail" : "kyle.hickinson@gmail.com",
+  "name" : "SF Font Fixer"
+}
