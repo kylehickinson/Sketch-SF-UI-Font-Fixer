@@ -16,7 +16,7 @@ var adjustUITextFontForLayer = function(layer) {
                             18: -0.45,
                             19: -0.49 };
 
-    if (characterSpacings[fontSize]) {
+    if (characterSpacings[fontSize] != nil) {
       [layer setCharacterSpacing:characterSpacings[fontSize]];
     }
 };
@@ -87,7 +87,7 @@ var adjustUIDisplayFontForLayer = function(layer) {
                             80: -0.083705,
                             81: -0.084752 };
                             
-    if (characterSpacings[fontSize]) {
+    if (characterSpacings[fontSize] != nil) {
       [layer setCharacterSpacing:characterSpacings[fontSize]];
     }
 };
