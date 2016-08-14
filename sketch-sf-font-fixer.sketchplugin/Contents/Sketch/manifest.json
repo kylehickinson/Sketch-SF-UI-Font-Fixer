@@ -3,10 +3,20 @@
   "commands" : [
     {
       "script" : "script.cocoascript",
-      "handler" : "onRun",
+      "handler": "onRun", 
       "shortcut" : "cmd ctrl t",
       "name" : "Fix San Francisco Character Spacing",
       "identifier" : "fixSelectedLayers",
+    },
+    {
+      "script" : "script.cocoascript",
+      "handlers" : {
+        "actions": {
+          "SelectionChanged.finish": "selectionChanged",
+          "InsertTextLayer.finish": "textDidChange",
+          "TextChanged.finish": "textDidChange",
+        }
+      },
     },
   ],
   "menu": {
