@@ -137,6 +137,23 @@ var textDidChange = function(context) {
   adjustTextLayerTracking(context.actionContext.layer);
 };
 
+function loadFramework(pluginRoot) {
+  if (NSClassFromString('KHHelper') == null) {
+    var mocha = [Mocha sharedRuntime];
+    return [mocha loadFrameworkWithName:'Helper' inDirectory:pluginRoot];
+  } else {
+    return true;
+  }
+}
+
+var sketchFinishedLoad = function(context) {
+  var scriptPath = context.scriptPath;
+  var pluginRoot = [scriptPath stringByDeletingLastPathComponent];
+  var success = loadFramework(pluginRoot);
+  var helper = KHHelper.shared();
+  log(success + ": " + helper);
+};
+
 var onRun = function(context) {
   var selectedLayers = context.selection;
   var loop = [selectedLayers objectEnumerator];

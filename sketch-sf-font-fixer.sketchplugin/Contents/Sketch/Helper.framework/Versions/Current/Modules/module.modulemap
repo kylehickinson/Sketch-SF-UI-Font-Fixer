@@ -1,0 +1,6 @@
+framework module Helper {
+  umbrella header "Helper.h"
+
+  export *
+  module * { export * }
+}
