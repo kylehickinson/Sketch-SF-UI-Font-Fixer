@@ -108,35 +108,6 @@ var adjustTextLayerTracking = function(layer) {
   }
 };
 
-function unique_layers(layers) {
-  var uniques = NSMutableDictionary.alloc().init();
-  for (i = 0; i < layers.length; i++) {
-    var layer = layers[i];
-    uniques.setObject_forKey(layer, layer.objectID());
-  }
-  return uniques.allValues();
-}
-
-var selectionChanged = function(context) {
-  var oldSelection = context.actionContext.oldSelection;
-  var newSelection = context.actionContext.newSelection;
-  var layers = unique_layers(newSelection.arrayByAddingObjectsFromArray(oldSelection));
-
-  if (layers.length != oldSelection.length + newSelection.length) {
-    return;
-  }
-
-  log("Selection Changed: " + context.action + "; context: " + context);
-
-  for (i = 0 ; i < layers.length; i++) {
-    adjustTextLayerTracking(layers[i]);
-  }
-};
-
-var textDidChange = function(context) {
-  adjustTextLayerTracking(context.actionContext.layer);
-};
-
 function loadFramework(pluginRoot) {
   if (NSClassFromString('KHHelper') == null) {
     var mocha = [Mocha sharedRuntime];
@@ -147,11 +118,10 @@ function loadFramework(pluginRoot) {
 }
 
 var sketchFinishedLoad = function(context) {
-  var scriptPath = context.scriptPath;
-  var pluginRoot = [scriptPath stringByDeletingLastPathComponent];
-  var success = loadFramework(pluginRoot);
+  if (!loadFramework(context.scriptPath.stringByDeletingLastPathComponent())) {
+    log("Failed to load helper framework");
+  }
   var helper = KHHelper.shared();
-  log(success + ": " + helper);
 };
 
 var onRun = function(context) {

@@ -12,10 +12,7 @@
       "script" : "script.cocoascript",
       "handlers" : {
         "actions": {
-          "Startup": "sketchFinishedLoad",
-          "SelectionChanged.finish": "selectionChanged",
-          "InsertTextLayer.finish": "textDidChange",
-          "TextChanged.finish": "textDidChange",
+          "Startup": "sketchFinishedLoad"
         }
       },
     },
