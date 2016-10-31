@@ -191,7 +191,39 @@ static NSString * const kSFUITextPrefix = @"SFUIText";
 
 - (void)helper_setAttributedString:(id)arg1
 {
-  [self helper_setAttributedString:arg1];
+  // Dirty hack for beta (41) for now: MSTextLayer is no longer a NSTextStorageDelegate, so it doesnt get called
+  // This method is still called however, so we could technically adjust the mutable string here.
+  //
+  // This DOESNT work on Sketch 40.
+  NSMutableAttributedString *storage = [[arg1 attributedString] mutableCopy];
+  CGFloat version = [[[NSBundle mainBundle] infoDictionary][@"CFBundleShortVersionString"] floatValue];
+  
+  if (version >= 41) {
+    [storage enumerateAttributesInRange:NSMakeRange(0, storage.length) options:0 usingBlock:^(NSDictionary<NSString *,id> * _Nonnull attrs, NSRange range, BOOL * _Nonnull stop) {
+      if (attrs[NSFontAttributeName]) {
+        NSFont *font = attrs[NSFontAttributeName];
+        NSString *fontName = font.fontName;
+        if ([font.familyName hasPrefix:@"SF UI"]) {
+          NSMutableDictionary *attributes = [attrs mutableCopy];
+          
+          if (font.pointSize >= 20 && [fontName hasPrefix:kSFUITextPrefix]) {
+            NSString *switchedName = [NSString stringWithFormat:@"%@%@", kSFUIDisplayPrefix, [font.fontName substringFromIndex:kSFUITextPrefix.length]];
+            attributes[NSFontAttributeName] = [NSFont fontWithName:switchedName size:font.pointSize] ?: [NSFont fontWithName:[NSString stringWithFormat:@"%@-Regular", kSFUIDisplayPrefix] size:font.pointSize];
+          } else if (font.pointSize < 20 && [fontName hasPrefix:kSFUIDisplayPrefix]) {
+            NSString *switchedName = [NSString stringWithFormat:@"%@%@", kSFUITextPrefix, [font.fontName substringFromIndex:kSFUIDisplayPrefix.length]];
+            attributes[NSFontAttributeName] = [NSFont fontWithName:switchedName size:font.pointSize] ?: [NSFont fontWithName:[NSString stringWithFormat:@"%@-Regular", kSFUITextPrefix] size:font.pointSize];
+          }
+          
+          attributes[NSKernAttributeName] = [KHHelper characterSpacings][@(font.pointSize)];
+          [storage setAttributes:attributes range:range];
+        }
+      }
+    }];
+    
+    [self helper_setAttributedString:[[NSClassFromString(@"MSAttributedString") alloc] initWithAttributedString:storage]];
+  } else {
+    [self helper_setAttributedString:arg1];
+  }
   
   // Update inspector
 #pragma clang diagnostic push
@@ -199,17 +231,21 @@ static NSString * const kSFUITextPrefix = @"SFUIText";
   id document = [(id<NSObject>)NSClassFromString(@"MSDocument") performSelector:@selector(currentDocument)];
   id inspectorController = [document performSelector:@selector(inspectorController)];
   id currentController = [inspectorController performSelector:@selector(currentController)];
-  NSArray *viewControllers = [currentController performSelector:@selector(viewControllers)];
-  for (NSViewController *vc in viewControllers) {
-    if ([vc isKindOfClass:NSClassFromString(@"MSLayerInspectorViewController")]) {
-      NSArray *layers = [vc performSelector:@selector(layerInspectorControllers)];
-      for (id layer in layers) {
-        if ([layer isKindOfClass:NSClassFromString(@"MSTextLayerSection")]) {
-          [layer performSelector:@selector(reloadData)];
-          break;
+  if ([currentController respondsToSelector:@selector(viewControllers)]) {
+    NSArray *viewControllers = [currentController performSelector:@selector(viewControllers)];
+    for (NSViewController *vc in viewControllers) {
+      if ([vc isKindOfClass:NSClassFromString(@"MSLayerInspectorViewController")]) {
+        NSArray *layers = [vc performSelector:@selector(layerInspectorControllers)];
+        for (id layer in layers) {
+          if ([layer isKindOfClass:NSClassFromString(@"MSTextLayerSection")]) {
+            dispatch_async(dispatch_get_main_queue(), ^{
+              [layer performSelector:@selector(reloadData)];
+            });
+            break;
+          }
         }
+        break;
       }
-      break;
     }
   }
 #pragma clang diagnostic pop

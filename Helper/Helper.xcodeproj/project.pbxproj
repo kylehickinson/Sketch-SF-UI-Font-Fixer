@@ -147,7 +147,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "cp -r ${CONFIGURATION_BUILD_DIR}/Helper.framework ${INSTALL_PATH}\n";
+			shellScript = "#rm -r \"${INSTALL_PATH}/Helper.framework\"\ncp -r \"${CONFIGURATION_BUILD_DIR}/Helper.framework\" \"${INSTALL_PATH}\"\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -261,7 +261,6 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 97533VPBBC;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -280,7 +279,6 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "";
 				COMBINE_HIDPI_IMAGES = YES;
-				DEFINES_MODULE = YES;
 				DEVELOPMENT_TEAM = 97533VPBBC;
 				DYLIB_COMPATIBILITY_VERSION = 1;
 				DYLIB_CURRENT_VERSION = 1;
@@ -313,6 +311,7 @@
 				2772DABD1D6A5ABC00A0455E /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 	};
