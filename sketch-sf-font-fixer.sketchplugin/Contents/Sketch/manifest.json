@@ -15,9 +15,10 @@
       "fixSelectedLayers",
     ]
   },
+  "appcast": "https://raw.githubusercontent.com/kylehickinson/Sketch-SF-UI-Font-Fixer/master/appcast.xml",
   "identifier" : "com.kylehickinson.sf-fix-fonts",
-  "version" : "0.1",
-  "description" : "A plugin which adjusts character spacing of SF UI Text/Display text layers based on its font size",
+  "version" : "1.0",
+  "description" : "A plugin which adjusts character spacing of SF UI Text/SF UI Display text layers based on its font size",
   "authorEmail" : "kyle.hickinson@gmail.com",
-  "name" : "SF Font Fixer"
+  "name" : "SF UI Font Fixer"
 }

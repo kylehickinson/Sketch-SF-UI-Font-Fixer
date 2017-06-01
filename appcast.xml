@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<rss version="2.0" xmlns:sparkle="http://www.andymatuschak.org/xml-namespaces/sparkle"  xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <channel>
+    <title>SF UI Font Fixer</title>
+    <link>https://raw.githubusercontent.com/kylehickinson/Sketch-SF-UI-Font-Fixer/master/appcast.xml</link>
+    <description>A Sketch plugin that adjusts the character spacing on text layers using iOS 9's SF UI Text/SF UI Display fonts to what it would be when used in an iOS app.</description>
+    <language>en</language>
+      <item>
+        <title>Version 1.0</title>
+        <description>
+          <![CDATA[
+            <p>A Sketch plugin that adjusts the character spacing on text layers using iOS 9's SF UI Text/Display fonts to what it would be when used in the app.</p>
+            <p>E.g. If you use SF UI Text at 16pt the script will set this layer's character spacing to -0.32.</p>
+          ]]>
+        </description>
+        <pubDate>Thu, 01 Jun 2017 09:54:00 -0500</pubDate>
+        <enclosure url="https://github.com/kylehickinson/Sketch-SF-UI-Font-Fixer/archive/v1.0.zip" sparkle:version="1.0" length="4559" type="application/octet-stream" />
+      </item>
+  </channel>
+</rss>
