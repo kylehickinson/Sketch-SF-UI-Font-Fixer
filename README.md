@@ -1,3 +1,5 @@
+[![Download from Sketchpacks.com](https://badges.sketchpacks.com/plugins/com.kylehickinson.sf-fix-fonts/version.svg)](https://api.sketchpacks.com/v1/plugins/com.kylehickinson.sf-fix-fonts/download) [![Compatible Sketch Version](https://badges.sketchpacks.com/plugins/com.kylehickinson.sf-fix-fonts/compatibility.svg)](https://sketchpacks.com/kylehickinson/Sketch-SF-UI-Font-Fixer)
+
 A Sketch plugin that adjusts the character spacing on text layers using iOS 9's SF UI Text/Display fonts to what it would be when used in the app.
 
 E.g. If you use SF UI Text at 16pt the script will set this layer's character spacing to -0.32.
