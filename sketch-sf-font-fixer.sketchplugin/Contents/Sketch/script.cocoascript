@@ -99,10 +99,10 @@ var onRun = function(context) {
     while (layer = [loop nextObject]) {
       if (layer.isKindOfClass(MSTextLayer)) {
         var fontName = layer.fontPostscriptName();
-        if (fontName.hasPrefix("SFUIText")) {
+        if (fontName.hasPrefix("SFUIText") || fontName.hasPrefix("SFProText")) {
           adjustUITextFontForLayer(layer);
         }
-        if (fontName.hasPrefix("SFUIDisplay")) {
+        if (fontName.hasPrefix("SFUIDisplay") || fontName.hasPrefix("SFProDisplay")) {
           adjustUIDisplayFontForLayer(layer);
         }
       }
