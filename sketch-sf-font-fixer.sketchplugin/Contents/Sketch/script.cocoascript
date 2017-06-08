@@ -1,6 +1,9 @@
 var SFUITextPrefix = "SFUIText"
 var SFUIDisplayPrefix = "SFUIDisplay"
 
+var SFProTextPrefix = "SFProText";
+var SFProDisplayPrefix = "SFProDisplay";
+
 var adjustTextLayerTracking = function(layer) {
   if (!layer || !layer.isKindOfClass(MSTextLayer)) {
     return;
@@ -9,7 +12,8 @@ var adjustTextLayerTracking = function(layer) {
   var fontSize = layer.fontSize();
   var fontName = layer.fontPostscriptName();
 
-  if (!fontName.hasPrefix(SFUITextPrefix) && !fontName.hasPrefix(SFUIDisplayPrefix)) {
+  if (!fontName.hasPrefix(SFUITextPrefix) && !fontName.hasPrefix(SFUIDisplayPrefix) && 
+      !fontName.hasPrefix(SFProTextPrefix) && !fontName.hasPrefix(SFProDisplayPrefix)) {
     return;
   }
 
@@ -21,8 +25,15 @@ var adjustTextLayerTracking = function(layer) {
     layer.setFontPostscriptName(SFUITextPrefix + fontName.substringFromIndex(SFUIDisplayPrefix.length));
   }
 
+  if (fontName.hasPrefix(SFProTextPrefix) && fontSize >= 20) {
+    layer.setFontPostscriptName(SFProDisplayPrefix + fontName.substringFromIndex(SFProTextPrefix.length));
+  }
+  if (fontName.hasPrefix(SFProDisplayPrefix) && fontSize < 20) {
+    layer.setFontPostscriptName(SFProTextPrefix + fontName.substringFromIndex(SFProDisplayPrefix.length));
+  }
+
   var characterSpacings = { 
-    // SF UI Text
+    // SF UI/Pro Text
     6: 0.246,
     7: 0.223,
     8: 0.208,
@@ -37,7 +48,7 @@ var adjustTextLayerTracking = function(layer) {
     17: -0.408,
     18: -0.45,
     19: -0.49,
-    // SF UI Display
+    // SF UI/Pro Display
     20: 0.340402, 
     21: 0.326660, 
     22: 0.320731, 

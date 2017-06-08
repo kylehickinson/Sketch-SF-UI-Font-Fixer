@@ -160,6 +160,8 @@ NS_INLINE void SwizzleInstanceMethod(Class class, SEL originalSelector, SEL swiz
 
 static NSString * const kSFUIDisplayPrefix = @"SFUIDisplay";
 static NSString * const kSFUITextPrefix = @"SFUIText";
+static NSString * const kSFProDisplayPrefix = @"SFProDisplay";
+static NSString * const kSFProTextPrefix = @"SFProText";
 
 - (void)helper_textStorageDidProcessEditing:(NSNotification *)notification
 {
@@ -169,6 +171,7 @@ static NSString * const kSFUITextPrefix = @"SFUIText";
     if (attrs[NSFontAttributeName]) {
       NSFont *font = attrs[NSFontAttributeName];
       NSString *fontName = font.fontName;
+      
       if ([font.familyName hasPrefix:@"SF UI"]) {
         NSMutableDictionary *attributes = [attrs mutableCopy];
         
@@ -178,6 +181,21 @@ static NSString * const kSFUITextPrefix = @"SFUIText";
         } else if (font.pointSize < 20 && [fontName hasPrefix:kSFUIDisplayPrefix]) {
           NSString *switchedName = [NSString stringWithFormat:@"%@%@", kSFUITextPrefix, [font.fontName substringFromIndex:kSFUIDisplayPrefix.length]];
           attributes[NSFontAttributeName] = [NSFont fontWithName:switchedName size:font.pointSize] ?: [NSFont fontWithName:[NSString stringWithFormat:@"%@-Regular", kSFUITextPrefix] size:font.pointSize];
+        }
+        
+        attributes[NSKernAttributeName] = [KHHelper characterSpacings][@(font.pointSize)];
+        [storage setAttributes:attributes range:range];
+      }
+      
+      if ([font.familyName hasPrefix:@"SF Pro"]) {
+        NSMutableDictionary *attributes = [attrs mutableCopy];
+        
+        if (font.pointSize >= 20 && [fontName hasPrefix:kSFProTextPrefix]) {
+          NSString *switchedName = [NSString stringWithFormat:@"%@%@", kSFProDisplayPrefix, [font.fontName substringFromIndex:kSFProTextPrefix.length]];
+          attributes[NSFontAttributeName] = [NSFont fontWithName:switchedName size:font.pointSize] ?: [NSFont fontWithName:[NSString stringWithFormat:@"%@-Regular", kSFProDisplayPrefix] size:font.pointSize];
+        } else if (font.pointSize < 20 && [fontName hasPrefix:kSFProDisplayPrefix]) {
+          NSString *switchedName = [NSString stringWithFormat:@"%@%@", kSFProTextPrefix, [font.fontName substringFromIndex:kSFProDisplayPrefix.length]];
+          attributes[NSFontAttributeName] = [NSFont fontWithName:switchedName size:font.pointSize] ?: [NSFont fontWithName:[NSString stringWithFormat:@"%@-Regular", kSFProTextPrefix] size:font.pointSize];
         }
         
         attributes[NSKernAttributeName] = [KHHelper characterSpacings][@(font.pointSize)];
@@ -217,6 +235,21 @@ static NSString * const kSFUITextPrefix = @"SFUIText";
           attributes[NSKernAttributeName] = [KHHelper characterSpacings][@(font.pointSize)];
           [storage setAttributes:attributes range:range];
         }
+        
+        if ([font.familyName hasPrefix:@"SF Pro"]) {
+          NSMutableDictionary *attributes = [attrs mutableCopy];
+          
+          if (font.pointSize >= 20 && [fontName hasPrefix:kSFProTextPrefix]) {
+            NSString *switchedName = [NSString stringWithFormat:@"%@%@", kSFProDisplayPrefix, [font.fontName substringFromIndex:kSFProTextPrefix.length]];
+            attributes[NSFontAttributeName] = [NSFont fontWithName:switchedName size:font.pointSize] ?: [NSFont fontWithName:[NSString stringWithFormat:@"%@-Regular", kSFProDisplayPrefix] size:font.pointSize];
+          } else if (font.pointSize < 20 && [fontName hasPrefix:kSFProDisplayPrefix]) {
+            NSString *switchedName = [NSString stringWithFormat:@"%@%@", kSFProTextPrefix, [font.fontName substringFromIndex:kSFProDisplayPrefix.length]];
+            attributes[NSFontAttributeName] = [NSFont fontWithName:switchedName size:font.pointSize] ?: [NSFont fontWithName:[NSString stringWithFormat:@"%@-Regular", kSFProTextPrefix] size:font.pointSize];
+          }
+          
+          attributes[NSKernAttributeName] = [KHHelper characterSpacings][@(font.pointSize)];
+          [storage setAttributes:attributes range:range];
+        }
       }
     }];
     
@@ -231,20 +264,23 @@ static NSString * const kSFUITextPrefix = @"SFUIText";
   id document = [(id<NSObject>)NSClassFromString(@"MSDocument") performSelector:@selector(currentDocument)];
   id inspectorController = [document performSelector:@selector(inspectorController)];
   id currentController = [inspectorController performSelector:@selector(currentController)];
-  if ([currentController respondsToSelector:@selector(viewControllers)]) {
-    NSArray *viewControllers = [currentController performSelector:@selector(viewControllers)];
-    for (NSViewController *vc in viewControllers) {
-      if ([vc isKindOfClass:NSClassFromString(@"MSLayerInspectorViewController")]) {
-        NSArray *layers = [vc performSelector:@selector(layerInspectorControllers)];
-        for (id layer in layers) {
-          if ([layer isKindOfClass:NSClassFromString(@"MSTextLayerSection")]) {
-            dispatch_async(dispatch_get_main_queue(), ^{
-              [layer performSelector:@selector(reloadData)];
-            });
-            break;
+  if ([currentController respondsToSelector:@selector(stackView)]) {
+    id stackView = [currentController performSelector:@selector(stackView)];
+    if ([stackView respondsToSelector:@selector(sectionViewControllers)]) {
+      NSArray *viewControllers = [stackView performSelector:@selector(sectionViewControllers)];
+      for (NSViewController *vc in viewControllers) {
+        if ([vc isKindOfClass:NSClassFromString(@"MSLayerInspectorViewController")]) {
+          NSArray *layers = [vc performSelector:@selector(layerInspectorControllers)];
+          for (id layer in layers) {
+            if ([layer isKindOfClass:NSClassFromString(@"MSTextLayerSection")]) {
+              dispatch_async(dispatch_get_main_queue(), ^{
+                [layer performSelector:@selector(reloadData)];
+              });
+              break;
+            }
           }
+          break;
         }
-        break;
       }
     }
   }
