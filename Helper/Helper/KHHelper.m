@@ -11,6 +11,26 @@
 #import <Foundation/Foundation.h>
 #import <AppKit/AppKit.h>
 
+#define let __auto_type const
+#define var __auto_type
+
+@interface NSObject (SafePerformSelector)
+- (id)performSelectorIfAvailable:(SEL)aSelector;
+@end
+
+@implementation NSObject (SafePerformSelector)
+- (id)performSelectorIfAvailable:(SEL)aSelector
+{
+  if ([self respondsToSelector:aSelector]) {
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Warc-performSelector-leaks"
+    return [self performSelector:aSelector];
+#pragma clang diagnostic pop
+  }
+  return nil;
+}
+@end
+
 @implementation KHHelper
 
 NS_INLINE void SwizzleInstanceMethod(Class class, SEL originalSelector, SEL swizzledSelector) {
@@ -25,8 +45,6 @@ NS_INLINE void SwizzleInstanceMethod(Class class, SEL originalSelector, SEL swiz
                                       originalSelector,
                                       method_getImplementation(swizzledMethod),
                                       method_getTypeEncoding(swizzledMethod));
-  
-//  NSLog(@"Swizzle; original = %@, replacement = %@, added = %d", originalMethod, swizzledMethod, didAddMethod);
   
   if (didAddMethod) {
     class_replaceMethod(class,
@@ -86,68 +104,64 @@ NS_INLINE void SwizzleInstanceMethod(Class class, SEL originalSelector, SEL swiz
     @18: @(-0.45),
     @19: @(-0.49),
     // SF UI Display
-    @20: @(0.340402),
-    @21: @(0.326660),
-    @22: @(0.320731),
-    @23: @(0.324079),
-    @24: @(0.326451),
-    @25: @(0.327846),
-    @26: @(0.328265),
-    @27: @(0.327706),
-    @28: @(0.326172),
-    @29: @(0.323661),
-    @30: @(0.334821),
-    @31: @(0.330845),
-    @32: @(0.341518),
-    @33: @(0.336077),
-    @34: @(0.346261),
-    @35: @(0.339355),
-    @36: @(0.349051),
-    @37: @(0.340681),
-    @38: @(0.331334),
-    @39: @(0.340053),
-    @40: @(0.329241),
-    @41: @(0.337472),
-    @42: @(0.325195),
-    @43: @(0.332938),
-    @44: @(0.319196),
-    @45: @(0.304478),
-    @46: @(0.311244),
-    @47: @(0.295061),
-    @48: @(0.301339),
-    @49: @(0.283691),
-    @50: @(0.289481),
-    @51: @(0.270368),
-    @52: @(0.250279),
-    @53: @(0.255092),
-    @54: @(0.233538),
-    @55: @(0.237863),
-    @56: @(0.214844),
-    @57: @(0.218680),
-    @58: @(0.194196),
-    @59: @(0.168736),
-    @60: @(0.171596),
-    @61: @(0.144671),
-    @62: @(0.147042),
-    @63: @(0.118652),
-    @64: @(0.120536),
-    @65: @(0.090681),
-    @66: @(0.092076),
-    @67: @(0.060756),
-    @68: @(0.061663),
-    @69: @(0.062570),
-    @70: @(0.029297),
-    @71: @(0.029715),
-    @72: @(0.030134),
-    @73: @(-0.005092),
-    @74: @(-0.005162),
-    @75: @(-0.041853),
-    @76: @(-0.042411),
-    @77: @(-0.042969),
-    @78: @(-0.081613),
-    @79: @(-0.082659),
-    @80: @(-0.083705),
-    @81: @(-0.084752)
+    @20: @(0.361328),
+    @21: @(0.348633),
+    @22: @(0.343750),
+    @23: @(0.348145),
+    @24: @(0.351562),
+    @25: @(0.354004),
+    @26: @(0.355469),
+    @27: @(0.355957),
+    @28: @(0.355469),
+    @29: @(0.354004),
+    @30: @(0.366211),
+    @31: @(0.363281),
+    @32: @(0.375000),
+    @33: @(0.370605),
+    @34: @(0.381836),
+    @35: @(0.375977),
+    @36: @(0.386719),
+    @37: @(0.379395),
+    @38: @(0.371094),
+    @39: @(0.380859),
+    @40: @(0.371094),
+    @41: @(0.380371),
+    @42: @(0.369141),
+    @43: @(0.377930),
+    @44: @(0.365234),
+    @45: @(0.351562),
+    @46: @(0.359375),
+    @47: @(0.344238),
+    @48: @(0.351562),
+    @49: @(0.334961),
+    @50: @(0.341797),
+    @51: @(0.323730),
+    @52: @(0.304688),
+    @53: @(0.310547),
+    @54: @(0.290039),
+    @55: @(0.295410),
+    @56: @(0.273438),
+    @57: @(0.278320),
+    @58: @(0.254883),
+    @59: @(0.230469),
+    @60: @(0.234375),
+    @61: @(0.208496),
+    @62: @(0.211914),
+    @63: @(0.184570),
+    @64: @(0.187500),
+    @65: @(0.158691),
+    @66: @(0.161133),
+    @67: @(0.130859),
+    @68: @(0.132812),
+    @69: @(0.134766),
+    @70: @(0.102539),
+    @71: @(0.104004),
+    @72: @(0.105469),
+    @73: @(0.071289),
+    @74: @(0.072266),
+    @75: @(0.036621),
+    @76: @(0.037109),
+    @77: @(0.037598),
   };
 }
 
@@ -163,125 +177,98 @@ static NSString * const kSFUITextPrefix = @"SFUIText";
 static NSString * const kSFProDisplayPrefix = @"SFProDisplay";
 static NSString * const kSFProTextPrefix = @"SFProText";
 
-- (void)helper_textStorageDidProcessEditing:(NSNotification *)notification
+- (BOOL)isTextVariant:(NSFont *)font
 {
-  NSTextStorage *storage = (NSTextStorage *)notification.object;
-  
-  [[storage copy] enumerateAttributesInRange:NSMakeRange(0, storage.length) options:0 usingBlock:^(NSDictionary<NSString *,id> * _Nonnull attrs, NSRange range, BOOL * _Nonnull stop) {
-    if (attrs[NSFontAttributeName]) {
-      NSFont *font = attrs[NSFontAttributeName];
-      NSString *fontName = font.fontName;
-      
-      if ([font.familyName hasPrefix:@"SF UI"]) {
-        NSMutableDictionary *attributes = [attrs mutableCopy];
-        
-        if (font.pointSize >= 20 && [fontName hasPrefix:kSFUITextPrefix]) {
-          NSString *switchedName = [NSString stringWithFormat:@"%@%@", kSFUIDisplayPrefix, [font.fontName substringFromIndex:kSFUITextPrefix.length]];
-          attributes[NSFontAttributeName] = [NSFont fontWithName:switchedName size:font.pointSize] ?: [NSFont fontWithName:[NSString stringWithFormat:@"%@-Regular", kSFUIDisplayPrefix] size:font.pointSize];
-        } else if (font.pointSize < 20 && [fontName hasPrefix:kSFUIDisplayPrefix]) {
-          NSString *switchedName = [NSString stringWithFormat:@"%@%@", kSFUITextPrefix, [font.fontName substringFromIndex:kSFUIDisplayPrefix.length]];
-          attributes[NSFontAttributeName] = [NSFont fontWithName:switchedName size:font.pointSize] ?: [NSFont fontWithName:[NSString stringWithFormat:@"%@-Regular", kSFUITextPrefix] size:font.pointSize];
-        }
-        
-        attributes[NSKernAttributeName] = [KHHelper characterSpacings][@(font.pointSize)];
-        [storage setAttributes:attributes range:range];
-      }
-      
-      if ([font.familyName hasPrefix:@"SF Pro"]) {
-        NSMutableDictionary *attributes = [attrs mutableCopy];
-        
-        if (font.pointSize >= 20 && [fontName hasPrefix:kSFProTextPrefix]) {
-          NSString *switchedName = [NSString stringWithFormat:@"%@%@", kSFProDisplayPrefix, [font.fontName substringFromIndex:kSFProTextPrefix.length]];
-          attributes[NSFontAttributeName] = [NSFont fontWithName:switchedName size:font.pointSize] ?: [NSFont fontWithName:[NSString stringWithFormat:@"%@-Regular", kSFProDisplayPrefix] size:font.pointSize];
-        } else if (font.pointSize < 20 && [fontName hasPrefix:kSFProDisplayPrefix]) {
-          NSString *switchedName = [NSString stringWithFormat:@"%@%@", kSFProTextPrefix, [font.fontName substringFromIndex:kSFProDisplayPrefix.length]];
-          attributes[NSFontAttributeName] = [NSFont fontWithName:switchedName size:font.pointSize] ?: [NSFont fontWithName:[NSString stringWithFormat:@"%@-Regular", kSFProTextPrefix] size:font.pointSize];
-        }
-        
-        attributes[NSKernAttributeName] = [KHHelper characterSpacings][@(font.pointSize)];
-        [storage setAttributes:attributes range:range];
-      }
-    }
-  }];
-  
-  [self helper_textStorageDidProcessEditing:notification];
+  return [font.fontName hasPrefix:kSFUITextPrefix] || [font.fontName hasPrefix:kSFProTextPrefix];
+}
+
+- (BOOL)isDisplayVariant:(NSFont *)font
+{
+  return [font.fontName hasPrefix:kSFUIDisplayPrefix] || [font.fontName hasPrefix:kSFProDisplayPrefix];
+}
+
+- (BOOL)isSFFont:(NSFont *)font
+{
+  return [self isTextVariant:font] || [self isDisplayVariant:font];
+}
+
+- (NSFont *)transformedFont:(NSFont *)font newPrefix:(NSString *)prefix
+{
+  let oldStyle = [[font.fontName componentsSeparatedByString:@"-"] lastObject];
+  let adjustedName = [NSString stringWithFormat:@"%@-%@", prefix, oldStyle];
+  let transformedFont = [NSFont fontWithName:adjustedName size:font.pointSize];
+  return transformedFont ?: [NSFont fontWithName:[NSString stringWithFormat:@"%@-Regular", prefix] size:font.pointSize];
 }
 
 - (void)helper_setAttributedString:(id)arg1
 {
-  // Dirty hack for beta (41) for now: MSTextLayer is no longer a NSTextStorageDelegate, so it doesnt get called
-  // This method is still called however, so we could technically adjust the mutable string here.
+  // MSTextLayer is no longer a NSTextStorageDelegate, so `textStorageDidProcessEditing` doesnt get called
+  // This method is still called however
   //
-  // This DOESNT work on Sketch 40.
-  NSMutableAttributedString *storage = [[arg1 attributedString] mutableCopy];
+  // Sketch 41+
   CGFloat version = [[[NSBundle mainBundle] infoDictionary][@"CFBundleShortVersionString"] floatValue];
   
-  if (version >= 41) {
-    [storage enumerateAttributesInRange:NSMakeRange(0, storage.length) options:0 usingBlock:^(NSDictionary<NSString *,id> * _Nonnull attrs, NSRange range, BOOL * _Nonnull stop) {
-      if (attrs[NSFontAttributeName]) {
-        NSFont *font = attrs[NSFontAttributeName];
-        NSString *fontName = font.fontName;
-        if ([font.familyName hasPrefix:@"SF UI"]) {
-          NSMutableDictionary *attributes = [attrs mutableCopy];
-          
-          if (font.pointSize >= 20 && [fontName hasPrefix:kSFUITextPrefix]) {
-            NSString *switchedName = [NSString stringWithFormat:@"%@%@", kSFUIDisplayPrefix, [font.fontName substringFromIndex:kSFUITextPrefix.length]];
-            attributes[NSFontAttributeName] = [NSFont fontWithName:switchedName size:font.pointSize] ?: [NSFont fontWithName:[NSString stringWithFormat:@"%@-Regular", kSFUIDisplayPrefix] size:font.pointSize];
-          } else if (font.pointSize < 20 && [fontName hasPrefix:kSFUIDisplayPrefix]) {
-            NSString *switchedName = [NSString stringWithFormat:@"%@%@", kSFUITextPrefix, [font.fontName substringFromIndex:kSFUIDisplayPrefix.length]];
-            attributes[NSFontAttributeName] = [NSFont fontWithName:switchedName size:font.pointSize] ?: [NSFont fontWithName:[NSString stringWithFormat:@"%@-Regular", kSFUITextPrefix] size:font.pointSize];
-          }
-          
-          attributes[NSKernAttributeName] = [KHHelper characterSpacings][@(font.pointSize)];
-          [storage setAttributes:attributes range:range];
-        }
-        
-        if ([font.familyName hasPrefix:@"SF Pro"]) {
-          NSMutableDictionary *attributes = [attrs mutableCopy];
-          
-          if (font.pointSize >= 20 && [fontName hasPrefix:kSFProTextPrefix]) {
-            NSString *switchedName = [NSString stringWithFormat:@"%@%@", kSFProDisplayPrefix, [font.fontName substringFromIndex:kSFProTextPrefix.length]];
-            attributes[NSFontAttributeName] = [NSFont fontWithName:switchedName size:font.pointSize] ?: [NSFont fontWithName:[NSString stringWithFormat:@"%@-Regular", kSFProDisplayPrefix] size:font.pointSize];
-          } else if (font.pointSize < 20 && [fontName hasPrefix:kSFProDisplayPrefix]) {
-            NSString *switchedName = [NSString stringWithFormat:@"%@%@", kSFProTextPrefix, [font.fontName substringFromIndex:kSFProDisplayPrefix.length]];
-            attributes[NSFontAttributeName] = [NSFont fontWithName:switchedName size:font.pointSize] ?: [NSFont fontWithName:[NSString stringWithFormat:@"%@-Regular", kSFProTextPrefix] size:font.pointSize];
-          }
-          
-          attributes[NSKernAttributeName] = [KHHelper characterSpacings][@(font.pointSize)];
-          [storage setAttributes:attributes range:range];
-        }
-      }
-    }];
-    
-    [self helper_setAttributedString:[[NSClassFromString(@"MSAttributedString") alloc] initWithAttributedString:storage]];
-  } else {
+  if (version < 41) {
     [self helper_setAttributedString:arg1];
+    return;
   }
   
+  NSMutableAttributedString *storage = [[arg1 attributedString] mutableCopy];
+  [storage enumerateAttributesInRange:NSMakeRange(0, storage.length) options:0 usingBlock:^(NSDictionary<NSString *,id> * _Nonnull attrs, NSRange range, BOOL * _Nonnull stop) {
+    
+    let font = (NSFont *)attrs[NSFontAttributeName];
+    if (!font || ![self isSFFont:font]) {
+      return;
+    }
+    
+    let attributes = (NSMutableDictionary *)[attrs mutableCopy];
+    
+    if ([self isTextVariant:font] && font.pointSize >= 20) {
+      // Transform to display variant
+      let newPrefix = [font.fontName hasPrefix:kSFUITextPrefix] ? kSFUIDisplayPrefix : kSFProDisplayPrefix;
+      attributes[NSFontAttributeName] = [self transformedFont:font newPrefix:newPrefix];
+    } else if ([self isDisplayVariant:font] && font.pointSize < 20) {
+      // Transform to text variant
+      let newPrefix = [font.fontName hasPrefix:kSFUIDisplayPrefix] ? kSFUITextPrefix : kSFProTextPrefix;
+      attributes[NSFontAttributeName] = [self transformedFont:font newPrefix:newPrefix];
+    }
+    
+    if (font.pointSize > 77) {
+      attributes[NSKernAttributeName] = @0.0;
+    } else {
+      attributes[NSKernAttributeName] = [KHHelper characterSpacings][@(font.pointSize)];
+    }
+    
+    [storage setAttributes:attributes range:range];
+  }];
+  
+  [self helper_setAttributedString:[[NSClassFromString(@"MSAttributedString") alloc] initWithAttributedString:storage]];
+
   // Update inspector
+  [self reloadInspector];
+}
+
+- (void)reloadInspector
+{
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wundeclared-selector"
   id document = [(id<NSObject>)NSClassFromString(@"MSDocument") performSelector:@selector(currentDocument)];
-  id inspectorController = [document performSelector:@selector(inspectorController)];
-  id currentController = [inspectorController performSelector:@selector(currentController)];
-  if ([currentController respondsToSelector:@selector(stackView)]) {
-    id stackView = [currentController performSelector:@selector(stackView)];
-    if ([stackView respondsToSelector:@selector(sectionViewControllers)]) {
-      NSArray *viewControllers = [stackView performSelector:@selector(sectionViewControllers)];
-      for (NSViewController *vc in viewControllers) {
-        if ([vc isKindOfClass:NSClassFromString(@"MSLayerInspectorViewController")]) {
-          NSArray *layers = [vc performSelector:@selector(layerInspectorControllers)];
-          for (id layer in layers) {
-            if ([layer isKindOfClass:NSClassFromString(@"MSTextLayerSection")]) {
-              dispatch_async(dispatch_get_main_queue(), ^{
-                [layer performSelector:@selector(reloadData)];
-              });
-              break;
-            }
-          }
+  id inspectorController = [document performSelectorIfAvailable:@selector(inspectorController)];
+  id currentController = [inspectorController performSelectorIfAvailable:@selector(currentController)];
+  id stackView = [currentController performSelectorIfAvailable:@selector(stackView)];
+  NSArray *viewControllers = [stackView performSelectorIfAvailable:@selector(sectionViewControllers)];
+  for (NSViewController *vc in viewControllers) {
+    if ([vc isKindOfClass:NSClassFromString(@"MSLayerInspectorViewController")]) {
+      NSArray *layers = [vc performSelectorIfAvailable:@selector(layerInspectorControllers)];
+      for (id layer in layers) {
+        if ([layer isKindOfClass:NSClassFromString(@"MSTextLayerSection")]) {
+          dispatch_async(dispatch_get_main_queue(), ^{
+            [layer performSelectorIfAvailable:@selector(reloadData)];
+          });
           break;
         }
       }
+      break;
     }
   }
 #pragma clang diagnostic pop
