@@ -242,7 +242,15 @@ static NSString * const kSFProTextPrefix = @"SFProText";
     [storage setAttributes:attributes range:range];
   }];
   
-  [self helper_setAttributedString:[[NSClassFromString(@"MSAttributedString") alloc] initWithAttributedString:storage]];
+  if (version >= 48) {
+    // Sketch 48 now includes color profile support, so the API changed a bit!
+#pragma clang diagnostic push
+#pragma clang diagnostic ignored "-Wundeclared-selector"
+    [self helper_setAttributedString:[[NSClassFromString(@"MSAttributedString") alloc] performSelector:@selector(initWithAttributedString:documentColorSpace:) withObject:storage withObject:nil]];
+#pragma clang diagnostic pop
+  } else {
+    [self helper_setAttributedString:[[NSClassFromString(@"MSAttributedString") alloc] initWithAttributedString:storage]];
+  }
 
   // Update inspector
   [self reloadInspector];

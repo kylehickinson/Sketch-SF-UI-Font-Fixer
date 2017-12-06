@@ -25,7 +25,7 @@
   },
   "appcast": "https://api.sketchpacks.com/v1/plugins/com.kylehickinson.sf-fix-fonts/appcast",
   "identifier" : "com.kylehickinson.sf-fix-fonts",
-  "version" : "2.0.1",
+  "version" : "2.0.2",
   "description" : "A plugin which adjusts character spacing of SF UI Text/Display text layers based on its font size",
   "authorEmail" : "kyle.hickinson@gmail.com",
   "name" : "SF UI Font Fixer"
