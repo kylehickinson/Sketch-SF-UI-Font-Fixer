@@ -6,13 +6,13 @@
       "handler" : "onRun",
       "shortcut" : "cmd ctrl t",
       "name" : "Fix San Francisco Character Spacing",
-      "identifier" : "fixSelectedLayers",
-    },
+      "identifier" : "fixSelectedLayers"
+    }
   ],
   "menu": {
     "isRoot": true,
     "items": [
-      "fixSelectedLayers",
+      "fixSelectedLayers"
     ]
   },
   "appcast": "https://api.sketchpacks.com/v1/plugins/com.kylehickinson.sf-fix-fonts/appcast",
